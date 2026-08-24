@@ -1,96 +1,119 @@
-# Reelio
+# Video Automation Tool
 
-## Purpose
+A cross-platform Electron desktop app that automates hook-based social video generation using FFmpeg.
 
-This project automates the creation of short social-style videos by combining:
+## What it does
 
-- a hook clip from `hooks/`
-- a demo clip from `demo/demo.mp4`
-- a background/voice audio track from `audio/audio.mp4`
-- an overlaid caption text for viewer engagement
+This app takes:
 
-The script crops the bottom 5% of each video, scales both clips to 1080x1920, overlays a caption, and concatenates the hook and demo clips into a final output.
+- a folder of hook videos (UGC clips)
+- a fixed demo video
+- a fixed audio track
+- a caption list
 
-## How it works
+Then it automatically generates final videos by:
 
-- `code.js` reads every `.mp4` file inside `Reelio/hooks/`
-- each hook file is processed with the demo video and audio track
-- captions are selected from the `captions` array
-- FFmpeg is invoked to:
-  1. scale input videos to 1080x1920
-  2. crop the bottom 5% of the video (`1080x1824`)
-  3. draw caption text on the hook clip
-  4. concatenate the hook and demo video streams
-  5. attach the audio track
-  6. save results to `outputs/output_<index>.mp4`
+1. scaling each hook and demo clip to 1080x1920
+2. cropping the bottom 5% of each clip
+3. overlaying a bold white caption with black border from 0.5s to 2s
+4. concatenating the hook clip with the demo clip
+5. applying the selected audio track
+6. saving output files to `outputs/`
 
-## Requirements
-
-- Node.js installed
-- `ffmpeg` installed and available on your system `PATH`
-
-## Folder structure
+## Project structure
 
 ```
 Reelio/
-  ├─ audio/
-  │   └─ audio.mp4
-  ├─ demo/
-  │   └─ demo.mp4
-  ├─ hooks/
-  │   ├─ trimmed_0.mp4
-  │   ├─ trimmed_1.mp4
-  │   └─ ...
+  ├─ core/
+  │   ├─ ffmpegResolver.js
+  │   └─ videoProcessor.js
+  ├─ ffmpeg/
+  │   └─ .gitkeep
   ├─ outputs/
-  │   └─ output_0.mp4
-  ├─ code.js
-  └─ README.md
+  │   └─ .gitkeep
+  ├─ renderer/
+  │   ├─ index.html
+  │   ├─ renderer.js
+  │   └─ styles.css
+  ├─ main.js
+  ├─ preload.js
+  ├─ package.json
+  ├─ README.md
+  └─ .gitignore
 ```
 
 ## Usage
 
-1. Place your hook clips into `Reelio/hooks/`.
-2. Put the demo clip at `Reelio/demo/demo.mp4`.
-3. Put the audio file at `Reelio/audio/audio.mp4`.
-4. Run the script from the `Reelio` folder:
+### Install dependencies
 
 ```bash
-cd Reelio
-node code.js
+cd c:\Users\codea\Documents\Business\Projects\Python-data\Reelio
+npm install
 ```
 
-5. Final videos will be written to `Reelio/outputs/`.
+### Run in development
 
-## Caption customization
-
-The caption text is defined in `code.js` inside the `captions` array.
-
-- Change existing hooks or add more lines
-- Single-line captions are currently recommended for safe FFmpeg parsing
-- Example:
-
-```js
-const captions = [
-  "You are doing this wrong",
-  "This changed everything",
-  "The fix everyone missed",
-  "You won't believe how simple this is"
-];
+```bash
+npm start
 ```
+
+### Build installable app
+
+```bash
+npm run dist
+```
+
+This creates installers for Windows and macOS using `electron-builder`.
+
+## How to use the app
+
+1. Click `Browse` to select the folder containing your hook videos.
+2. Choose the fixed demo video.
+3. Choose the fixed audio file.
+4. Enter one caption per line in the captions input.
+5. Click `Generate Videos`.
+6. Monitor progress in the status log.
+7. Final videos are written to the `outputs/` folder.
+
+## Captions
+
+- Each caption line is rotated over the hook videos.
+- The first caption will overlay the first hook, the second caption the second hook, and so on.
+- If the caption list is shorter than the number of hooks, captions repeat.
+
+## FFmpeg bundling
+
+The app resolves FFmpeg from the bundled `ffmpeg/` folder if binaries are present, otherwise it falls back to `ffmpeg-static`.
+
+To bundle your own binaries, place them here:
+
+- `ffmpeg/win32/ffmpeg.exe`
+- `ffmpeg/macos/ffmpeg`
+- `ffmpeg/linux/ffmpeg`
+
+## Technical details
+
+- `main.js` manages the Electron window and IPC.
+- `preload.js` exposes a secure API to the renderer.
+- `renderer/renderer.js` handles UI events and status logs.
+- `core/videoProcessor.js` builds FFmpeg commands and processes files sequentially.
+- `core/ffmpegResolver.js` resolves the FFmpeg binary path for the current platform.
 
 ## Notes
 
-- The script currently uses `-shortest` to stop output when the shortest stream ends.
-- `-af apad` is added so the audio will pad if the video is longer than the audio.
-- The crop step removes the bottom 5% of the scaled video to create a tighter frame.
+- The app uses `libx264` and `aac` for output encoding.
+- It uses a fixed caption display window of `between(t,0.5,2)`.
+- Outputs are generated in the `outputs/` folder.
 
 ## Troubleshooting
 
-- If you get FFmpeg errors about filters, ensure your `ffmpeg` installation is the correct version and available on the `PATH`.
-- If output files are missing, check the `hooks/` folder and ensure all input files are valid MP4s.
+- If video generation fails, check the log panel for FFmpeg errors.
+- Ensure input files are valid MP4 audio/video files.
+- Verify `npm install` completed successfully.
 
-## Future improvements
+## Build output
 
-- support true multiline captions via a text file or `drawtext` escaping helper
-- automatically detect input sizes rather than fixed scaling/crop values
-- add separate caption timing per clip
+- Windows: `nsis` installer
+- macOS: `dmg`
+
+If you want macOS and Windows builds from a single machine, use a CI service or macOS host for the DMG build.

@@ -1,0 +1,51 @@
+{
+  "name": "video-automation-tool",
+  "productName": "Video Automation Tool",
+  "version": "1.0.0",
+  "description": "Cross-platform Electron app to generate hook + demo videos using FFmpeg.",
+  "main": "main.js",
+  "scripts": {
+    "start": "electron .",
+    "pack": "electron-builder --dir",
+    "dist": "electron-builder",
+    "lint": "echo 'Add linting commands here'"
+  },
+  "build": {
+    "appId": "com.reelio.videoautomation",
+    "productName": "Video Automation Tool",
+    "files": [
+      "**/*",
+      "!node_modules/*.{o,hprof,pyc,pyo}",
+      "!**/.*",
+      "!dist/**"
+    ],
+    "directories": {
+      "buildResources": "build"
+    },
+    "extraResources": [
+      "ffmpeg/**"
+    ],
+    "mac": {
+      "target": ["dmg"],
+      "category": "public.app-category.video"
+    },
+    "win": {
+      "target": ["nsis"]
+    },
+    "nsis": {
+      "oneClick": false,
+      "perMachine": false,
+      "allowElevation": true,
+      "allowToChangeInstallationDirectory": true
+    }
+  },
+  "author": "Reelio",
+  "license": "MIT",
+  "dependencies": {
+    "electron": "^26.0.0",
+    "ffmpeg-static": "^5.1.0"
+  },
+  "devDependencies": {
+    "electron-builder": "^24.6.1"
+  }
+}

@@ -1,0 +1,153 @@
+:root {
+  --bg: #111827;
+  --panel: #1f2937;
+  --panel-alt: #111827;
+  --text: #f9fafb;
+  --muted: #9ca3af;
+  --accent: #38bdf8;
+  --success: #10b981;
+  --danger: #f472b6;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  font-family: Inter, system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  color: var(--text);
+  background: radial-gradient(circle at top, #0f172a 0%, #020617 58%);
+}
+
+.app-shell {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 28px;
+}
+
+header h1 {
+  margin: 0 0 4px;
+  font-size: 2rem;
+}
+
+header p {
+  margin: 0;
+  color: var(--muted);
+}
+
+.control-grid {
+  display: grid;
+  gap: 18px;
+  margin-top: 24px;
+}
+
+.control-row {
+  display: grid;
+  gap: 10px;
+}
+
+.control-row label {
+  font-weight: 600;
+  color: var(--text);
+}
+
+.input-group {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 10px;
+}
+
+input[type='text'], textarea {
+  width: 100%;
+  border: 1px solid #2d3748;
+  border-radius: 12px;
+  background: #0f172a;
+  color: var(--text);
+  padding: 12px 14px;
+  font-size: 0.95rem;
+}
+
+textarea {
+  resize: vertical;
+  min-height: 120px;
+}
+
+button {
+  border: none;
+  border-radius: 12px;
+  background: var(--accent);
+  color: #03151f;
+  font-weight: 700;
+  padding: 12px 18px;
+  cursor: pointer;
+  transition: transform 0.16s ease, background-color 0.16s ease;
+}
+
+button:hover {
+  transform: translateY(-1px);
+  background: #0ea5e9;
+}
+
+.actions {
+  margin-top: 24px;
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  flex-wrap: wrap;
+}
+
+.status {
+  display: grid;
+  gap: 10px;
+  min-width: 320px;
+}
+
+.status span {
+  color: var(--muted);
+}
+
+.progress-bar {
+  width: 100%;
+  height: 12px;
+  border-radius: 999px;
+  background: rgba(148, 163, 184, 0.16);
+  overflow: hidden;
+}
+
+#progressFill {
+  width: 0%;
+  height: 100%;
+  background: linear-gradient(90deg, #38bdf8 0%, #0ea5e9 100%);
+  transition: width 0.25s ease;
+}
+
+.log-panel {
+  margin-top: 28px;
+  background: var(--panel);
+  border: 1px solid #334155;
+  border-radius: 18px;
+  padding: 18px;
+}
+
+.log-header {
+  margin-bottom: 12px;
+}
+
+pre {
+  margin: 0;
+  white-space: pre-wrap;
+  word-break: break-word;
+  color: var(--text);
+  font-size: 0.9rem;
+  line-height: 1.5;
+  max-height: 320px;
+  overflow-y: auto;
+}
+
+@media (max-width: 760px) {
+  .actions {
+    flex-direction: column;
+    align-items: stretch;
+  }
+}
